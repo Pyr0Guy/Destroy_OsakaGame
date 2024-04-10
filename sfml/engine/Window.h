@@ -6,10 +6,14 @@
 #include <SFML/Graphics/RenderWindow.hpp>
 #include <SFML/Graphics/Font.hpp>
 #include <SFML/Graphics/Text.hpp>
+#include <SFML/Graphics/Texture.hpp>
+#include <SFML/Graphics/Sprite.hpp>
 #include <SFML/Window/VideoMode.hpp>
 #include <SFML/Window/Event.hpp>
+#include <SFML/Audio.hpp>
 
 #include "enemy.h"
+#include "Explode.h"
 
 class Game
 {
@@ -23,6 +27,13 @@ class Game
 	//Объекты
 	std::vector<Enemy> p_EnemyVector;
 	Enemy p_Enemy;
+
+	std::vector<Explode> p_ExplodeVector;
+	sf::Texture BoomTexture;
+	Explode p_Boom;
+
+	sf::Texture BG_Texture;
+	sf::Sprite	BG;
 
 	//Шрифт
 	sf::Font Font;
@@ -41,11 +52,16 @@ class Game
 	sf::Vector2i MousePosWindow;
 	sf::Vector2f MousePosView;
 
+	//Звук
+	sf::SoundBuffer p_SB;
+	sf::Sound snd;
+
 	//Инициализация говна
 	void InitVariables();
 	void InitWindow();
 	void InitFonts();
 	void InitText();
+	void InitSound();
 
 	//Процессинг Эвентов
 	void HandleEvents();
@@ -62,6 +78,7 @@ public:
 	void UpdateText();
 
 	void SpawnEnemy();
+	void SpawnExplode(sf::Vector2f Vec);
 
 	const bool GetGameRunningState() const;
 };

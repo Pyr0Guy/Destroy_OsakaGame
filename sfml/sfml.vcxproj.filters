@@ -24,12 +24,18 @@
     <ClCompile Include="engine\Enemy.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
+    <ClCompile Include="engine\Explode.cpp">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="engine\Window.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
     <ClInclude Include="engine\Enemy.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\Explode.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
   </ItemGroup>

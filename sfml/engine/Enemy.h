@@ -19,7 +19,6 @@ public:
 	void Move(sf::Vector2f Vec);
 	void SetPosition(sf::Vector2f Vec);
 	void Update();
-	void Render();
 	
 	const sf::Vector2u GetSize() const;
 	sf::Sprite GetEnemySprite() const;
