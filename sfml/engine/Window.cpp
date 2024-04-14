@@ -11,6 +11,16 @@ void Game::InitVariables()
 	this->MaxEnemys				= 15;
 	this->MouseHeld				= false;
 
+	if (!this->BoomTexture.loadFromFile("assets/images/explodeFunny.png"))
+	{
+		std::cout << "Cant load BOOM" << std::endl;
+	}
+
+	if (!this->EnemyTexture.loadFromFile("assets/images/enemy/enemy.png"))
+	{
+		std::cout << "Cant load Enemy" << std::endl;
+	}
+
 	if (!this->BG_Texture.loadFromFile("assets/images/bg.png"))
 	{
 		std::cout << "Cant load BG" << std::endl;
@@ -32,16 +42,13 @@ void Game::InitWindow()
 	this->p_Running			= true;
 }
 
-void Game::InitFonts()
+void Game::InitFontsAndText()
 {
 	if (!this->Font.loadFromFile("assets/fonts/comic.ttf"))
 	{
 		std::cout << "Failed to load Font" << std::endl;
 	}
-}
 
-void Game::InitText()
-{
 	this->Text.setFont(this->Font);
 	this->Text.setCharacterSize(24);
 	this->Text.setFillColor(sf::Color::White);
@@ -62,8 +69,7 @@ Game::Game()
 {
 	this->InitVariables();
 	this->InitWindow();
-	this->InitFonts();
-	this->InitText();
+	this->InitFontsAndText(); 
 	this->InitSound();
 }
 
@@ -76,21 +82,23 @@ void Game::UpdateWindow()
 {
 	this->HandleEvents();
 	this->UpdateMousePos();
+	this->SpawnEnemy();
 	this->UpdateEnemy();
 	this->UpdateText();
+	this->UpdateExplode();
+}
 
-	for (auto& a : this->p_ExplodeVector)
-		a.Update();
-	
-
-	for (size_t i = 0; i < this->p_ExplodeVector.size(); i++)
+void Game::SpawnEnemy()
+{
+	if (this->p_EnemyVector.size() < this->MaxEnemys)
 	{
-		if (this->p_ExplodeVector[i].finish)
+		if (this->EnemySpawnTimer >= this->EnemySpawnTimerMax)
 		{
-			this->p_ExplodeVector.erase(this->p_ExplodeVector.begin() + i);
-			break;
+			this->EnemySpawnTimer = 0.f;
+			//Spawn Enemy
+			this->p_EnemyVector.push_back(Enemy(*this->p_Window, this->EnemyTexture));
 		}
-
+		this->EnemySpawnTimer += 1.f;
 	}
 }
 
@@ -108,13 +116,8 @@ void Game::DrawWindow()
 	this->p_Window->clear();
 
 	this->p_Window->draw(this->BG);
-	for (auto& a : this->p_EnemyVector)
-		this->p_Window->draw(a.GetEnemySprite());
-	
-	for (auto& a : this->p_ExplodeVector)
-		a.Render(*this->p_Window);
-	//this->p_Boom.Render(*this->p_Window);
-
+	this->RenderEnemy(*this->p_Window);
+	this->RenderExplode(*this->p_Window);
 	this->RenderText(*this->p_Window);
 
 	this->p_Window->display();
@@ -129,21 +132,13 @@ void Game::UpdateMousePos()
 void Game::UpdateEnemy()
 {
 	for (auto& a : this->p_EnemyVector)
-		a.Update();
-
-	if (this->p_EnemyVector.size() < this->MaxEnemys)
 	{
-		if (this->EnemySpawnTimer >= this->EnemySpawnTimerMax)
-		{
-			this->EnemySpawnTimer = 0.f;
-			this->SpawnEnemy();
-		}
-		this->EnemySpawnTimer += 1.f;
+		a.Update(*this->p_Window);
 	}
 
-	for (size_t i = 0; i < this->p_EnemyVector.size(); i++)
+	for (int i = 0; i < this->p_EnemyVector.size(); i++)
 	{
-		if (this->p_EnemyVector[i].GetEnemySprite().getPosition().y > this->p_Window->getSize().y)
+		if (this->p_EnemyVector[i].Delete)
 			this->p_EnemyVector.erase(this->p_EnemyVector.begin() + i);
 	}
 
@@ -159,7 +154,8 @@ void Game::UpdateEnemy()
 					this->p_EnemyVector.erase(this->p_EnemyVector.begin() + i);
 
 					this->Points += 1;
-					this->SpawnExplode(this->MousePosView);
+					//Spawn Explosion
+					this->p_ExplodeVector.push_back(Explode(*this->p_Window, this->BoomTexture, this->MousePosView));
 					snd.play();
 					break;
 				}
@@ -173,6 +169,34 @@ void Game::UpdateEnemy()
 	
 }
 
+void Game::RenderEnemy(sf::RenderTarget& target)
+{
+	for (auto& a : this->p_EnemyVector)
+		a.Render(target);
+}
+
+void Game::UpdateExplode()
+{
+	for (size_t i = 0; i < this->p_ExplodeVector.size(); i++)
+	{
+		if (this->p_ExplodeVector[i].finish)
+		{
+			this->p_ExplodeVector.erase(this->p_ExplodeVector.begin() + i);
+			break;
+		}
+	}
+
+
+	for (auto& a : this->p_ExplodeVector)
+		a.Update();
+}
+
+void Game::RenderExplode(sf::RenderTarget& target)
+{
+	for (auto& a : this->p_ExplodeVector)
+		a.Render(target);
+}
+
 void Game::RenderText(sf::RenderTarget& target)
 {
 	target.draw(this->Text);
@@ -184,27 +208,6 @@ void Game::UpdateText()
 
 	ss << "Points: " << this->Points;
 	this->Text.setString(ss.str());
-}
-
-void Game::SpawnEnemy()
-{
-	this->p_Enemy.SetPosition(sf::Vector2f(
-		static_cast<float>(rand() % static_cast<int>(this->p_Window->getSize().x - this->p_Enemy.GetSize().x)),
-		static_cast<float>(rand() % static_cast<int>((this->p_Window->getSize().y - 200.f) - this->p_Enemy.GetSize().y)))
-	);
-
-	this->p_Enemy.YSpeed = 0.5f + static_cast<float>(rand() % 6);
-
-	this->p_EnemyVector.push_back(this->p_Enemy);
-}
-
-void Game::SpawnExplode(sf::Vector2f Vec)
-{
-	this->p_Boom.ExplodeSprite.setPosition(Vec.x - 25.f, Vec.y - 45.f);
-	this->p_Boom.clock = 0;
-	this->p_Boom.finish = false;
-	this->p_Boom.UVShit.left = 0;
-	this->p_ExplodeVector.push_back(this->p_Boom);
 }
 
 const bool Game::GetGameRunningState() const

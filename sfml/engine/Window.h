@@ -17,53 +17,42 @@
 
 class Game
 {
-	//Значения всякие
 	sf::RenderWindow*	p_Window;
 	sf::VideoMode		p_VMode;
 	sf::Event			e;
 	std::string			p_Title;
 	bool				p_Running;
 
-	//Объекты
 	std::vector<Enemy> p_EnemyVector;
-	Enemy p_Enemy;
+	sf::Texture EnemyTexture;
 
 	std::vector<Explode> p_ExplodeVector;
 	sf::Texture BoomTexture;
-	Explode p_Boom;
 
 	sf::Texture BG_Texture;
 	sf::Sprite	BG;
 
-	//Шрифт
 	sf::Font Font;
-
-	//Текст
 	sf::Text Text;
 
-	//Логика
 	unsigned int Points;
 	float EnemySpawnTimer;
 	float EnemySpawnTimerMax;
 	unsigned int MaxEnemys;
 	bool MouseHeld;
 
-	//Позиция мышки
 	sf::Vector2i MousePosWindow;
 	sf::Vector2f MousePosView;
 
-	//Звук
 	sf::SoundBuffer p_SB;
 	sf::Sound snd;
 
-	//Инициализация говна
 	void InitVariables();
 	void InitWindow();
-	void InitFonts();
-	void InitText();
+	void InitFontsAndText();
 	void InitSound();
 
-	//Процессинг Эвентов
+	void SpawnEnemy();
 	void HandleEvents();
 
 public:
@@ -74,11 +63,11 @@ public:
 	void DrawWindow();
 	void UpdateMousePos();
 	void UpdateEnemy();
+	void RenderEnemy(sf::RenderTarget& target);
+	void UpdateExplode();
+	void RenderExplode(sf::RenderTarget& target);
 	void RenderText(sf::RenderTarget& target);
 	void UpdateText();
-
-	void SpawnEnemy();
-	void SpawnExplode(sf::Vector2f Vec);
 
 	const bool GetGameRunningState() const;
 };

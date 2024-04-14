@@ -2,6 +2,7 @@
 #include <SFML/Graphics/Sprite.hpp>
 #include <SFML/Graphics/RenderTarget.hpp>
 #include <SFML/Graphics/Texture.hpp>
+#include <SFML/Graphics/RenderWindow.hpp>
 #include <SFML/Graphics/Rect.hpp>
 #include <SFML/System/Clock.hpp>
 
@@ -11,10 +12,10 @@ class Explode
 {
 	sf::Texture Texture;
 
-	void InitVariables();
+	void InitVariables(const sf::RenderWindow& window, const sf::Texture& texture, sf::Vector2f Vec);
 
 public:
-	Explode();
+	Explode(const sf::RenderWindow& window, const sf::Texture& texture, sf::Vector2f Vec);
 
 	void Update();
 	void Render(sf::RenderTarget& target);

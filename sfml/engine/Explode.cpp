@@ -1,22 +1,18 @@
 #include "Explode.h"
 
-void Explode::InitVariables()
+void Explode::InitVariables(const sf::RenderWindow& window, const sf::Texture& texture, sf::Vector2f Vec)
 {
+	this->ExplodeSprite.setTexture(texture);
+	this->ExplodeSprite.setPosition(Vec.x - 25.f, Vec.y - 45.f);
 	this->finish = false;
 	this->UVShit = sf::IntRect(0, 0, 72, 100);
 
-	if (!this->Texture.loadFromFile("assets/images/explodeFunny.png"))
-	{
-		std::cout << "Cant load BOOM" << std::endl;
-	}
-
-	this->ExplodeSprite.setTexture(this->Texture);
 	this->ExplodeSprite.setTextureRect(this->UVShit);
 }
 
-Explode::Explode()
+Explode::Explode(const sf::RenderWindow& window, const sf::Texture& texture, sf::Vector2f Vec)
 {
-	this->InitVariables();
+	this->InitVariables(window, texture, Vec);
 }
 
 void Explode::Update()

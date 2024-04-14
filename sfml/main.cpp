@@ -2,11 +2,7 @@
 
 #include "engine/Window.h"
 
-#if !NDEBUG
 int main(int argc, char* argv[])
-#else
-int WinMain(int argc, char* argv[])
-#endif
 {
 	srand(static_cast<unsigned>(time(NULL)));
 

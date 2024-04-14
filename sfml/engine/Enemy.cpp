@@ -1,20 +1,22 @@
 #include "Enemy.h"
 #include <iostream>
 
-void Enemy::InitEnemy()
+void Enemy::InitEnemy(const sf::RenderWindow& window, const sf::Texture& texture)
 {
-	if (!this->p_EnemyTexture.loadFromFile("assets/images/enemy/enemy.png"))
-	{
-		std::cout << "Can't load assets/images/enemy/enemy.png" << std::endl;
-	}
+	this->p_Enemy.setTexture(texture);
 
-	this->p_Enemy.setTexture(this->p_EnemyTexture);
-	this->YSpeed = static_cast<float>(rand() % 6);
+	this->p_Enemy.setPosition(sf::Vector2f(
+		static_cast<float>(rand() % static_cast<int>(window.getSize().x - this->p_Enemy.getTexture()->getSize().x)),
+		static_cast<float>(rand() % static_cast<int>((window.getSize().y - 200.f) - this->p_Enemy.getTexture()->getSize().y)))
+	);
+
+	this->YSpeed = 0.5f + static_cast<float>(rand() % 6);
+	this->Delete = false;
 }
 
-Enemy::Enemy()
+Enemy::Enemy(const sf::RenderWindow& window, const sf::Texture& texture)
 {
-	this->InitEnemy();
+	this->InitEnemy(window, texture);
 }
 
 Enemy::~Enemy()
@@ -26,13 +28,17 @@ void Enemy::SetPosition(sf::Vector2f Vec)
 	this->p_Enemy.setPosition(Vec);
 }
 
-void Enemy::Update()
+void Enemy::Update(const sf::RenderWindow& window)
 {
+	this->p_Enemy.move(sf::Vector2f(0, this->YSpeed));
 
-	this->p_Enemy.move(sf::Vector2f(
-		0,
-		this->YSpeed
-	));
+	if (this->p_Enemy.getPosition().y > window.getSize().y)
+		this->Delete = true;
+}
+
+void Enemy::Render(sf::RenderTarget& target)
+{
+	target.draw(this->p_Enemy);
 }
 
 void Enemy::Move(sf::Vector2f Vec)
