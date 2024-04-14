@@ -9,22 +9,16 @@
 class Enemy
 {
 	sf::Sprite p_Enemy;
+	float speed;
 
-	void InitEnemy(const sf::RenderWindow& window, const sf::Texture& texture);
 public:
-	float YSpeed;
+	Enemy(const sf::RenderWindow& window, const sf::Texture* textures);
+
 	bool Delete;
-	
-	Enemy(const sf::RenderWindow& window, const sf::Texture& texture);
-	~Enemy();
 
-	void Move(sf::Vector2f Vec);
-	void SetPosition(sf::Vector2f Vec);
 	void Update(const sf::RenderWindow& window);
+	void Render(sf::RenderTarget* target);
 
-	void Render(sf::RenderTarget& target);
-	
-	const sf::Vector2u GetSize() const;
-	sf::Sprite GetEnemySprite() const;
+	const sf::Sprite GetEnemy() const;
 };
 

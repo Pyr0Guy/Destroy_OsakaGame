@@ -8,10 +8,10 @@ int main(int argc, char* argv[])
 
 	Game GameWindow;
 
-	while (GameWindow.GetGameRunningState())
+	while (GameWindow.GameRunning())
 	{
-		GameWindow.UpdateWindow();
-		GameWindow.DrawWindow();
+		GameWindow.Update();
+		GameWindow.Render();
 	}
 
 	return EXIT_SUCCESS;

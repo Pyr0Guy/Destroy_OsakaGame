@@ -4,25 +4,26 @@
 #include <SFML/Graphics/Texture.hpp>
 #include <SFML/Graphics/RenderWindow.hpp>
 #include <SFML/Graphics/Rect.hpp>
-#include <SFML/System/Clock.hpp>
+#include <SFML/Audio/Sound.hpp>]
+#include <SFML/Audio/SoundBuffer.hpp>
 
 #include <iostream>
 
 class Explode
 {
-	sf::Texture Texture;
+	sf::Sprite p_Explode;
+	sf::IntRect UVShit;
+	sf::Sound p_ExplodeSound;
 
-	void InitVariables(const sf::RenderWindow& window, const sf::Texture& texture, sf::Vector2f Vec);
+	int frame;
+	int clock;
 
 public:
-	Explode(const sf::RenderWindow& window, const sf::Texture& texture, sf::Vector2f Vec);
+	Explode(const sf::Vector2f& Vec, const sf::Texture* texture, sf::SoundBuffer* snd);
+
+	bool Finish;
 
 	void Update();
-	void Render(sf::RenderTarget& target);
-
-	sf::Sprite ExplodeSprite;
-	bool finish;
-	int clock;
-	sf::IntRect UVShit;
+	void Render(sf::RenderTarget* target);
 };
 

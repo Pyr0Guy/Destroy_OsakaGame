@@ -2,6 +2,8 @@
 #include <vector>
 #include <ctime>
 #include <sstream>
+#include <map>
+#include <string>
 
 #include <SFML/Graphics/RenderWindow.hpp>
 #include <SFML/Graphics/Font.hpp>
@@ -10,7 +12,7 @@
 #include <SFML/Graphics/Sprite.hpp>
 #include <SFML/Window/VideoMode.hpp>
 #include <SFML/Window/Event.hpp>
-#include <SFML/Audio.hpp>
+#include <SFML/Audio/SoundBuffer.hpp>
 
 #include "enemy.h"
 #include "Explode.h"
@@ -18,56 +20,57 @@
 class Game
 {
 	sf::RenderWindow*	p_Window;
-	sf::VideoMode		p_VMode;
-	sf::Event			e;
-	std::string			p_Title;
-	bool				p_Running;
+	sf::VideoMode		p_VM;
+	std::string			p_GameName;
 
-	std::vector<Enemy> p_EnemyVector;
-	sf::Texture EnemyTexture;
-
-	std::vector<Explode> p_ExplodeVector;
-	sf::Texture BoomTexture;
-
-	sf::Texture BG_Texture;
-	sf::Sprite	BG;
-
-	sf::Font Font;
-	sf::Text Text;
-
-	unsigned int Points;
-	float EnemySpawnTimer;
-	float EnemySpawnTimerMax;
-	unsigned int MaxEnemys;
+	//Variables
+	bool p_GameRunning;
 	bool MouseHeld;
 
-	sf::Vector2i MousePosWindow;
-	sf::Vector2f MousePosView;
+	float p_EnemySpawnTimer;
+	float p_EnemySpawnTimerMax;
+	unsigned int p_Points;
+	unsigned int p_MaxEnemys;
 
-	sf::SoundBuffer p_SB;
-	sf::Sound snd;
+	sf::Vector2i p_MousePosWindow;
+	sf::Vector2f p_MousePosView;
 
+	sf::Font p_Font;
+	sf::Text p_Text;
+
+	sf::Sprite p_BG;
+
+	//Resourses
+	std::map<std::string, sf::Texture*>		p_Textures;
+	std::map<std::string, sf::SoundBuffer*>	p_Sounds;
+	std::vector<Enemy*>						p_EnemyVector;
+	std::vector<Explode*>					p_ExplodeVector;
+
+	//Functions
 	void InitVariables();
 	void InitWindow();
-	void InitFontsAndText();
-	void InitSound();
+	void InitTextures();
+	void InitSounds();
+	void InitFontAndText();
 
-	void SpawnEnemy();
 	void HandleEvents();
 
+	void UpdateEnemy();
+	void RenderEnemy();
+
+	void UpdateMousePosition();
+	void UpdateText();
+
+	void UpdateExplode();
+	void RenderExplode();
+
+	void SpawnEnemy();
 public:
 	Game();
 	~Game();
 
-	void UpdateWindow();
-	void DrawWindow();
-	void UpdateMousePos();
-	void UpdateEnemy();
-	void RenderEnemy(sf::RenderTarget& target);
-	void UpdateExplode();
-	void RenderExplode(sf::RenderTarget& target);
-	void RenderText(sf::RenderTarget& target);
-	void UpdateText();
+	void Update();
+	void Render();
 
-	const bool GetGameRunningState() const;
+	const bool GameRunning() const;
 };
